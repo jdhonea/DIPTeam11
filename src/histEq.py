@@ -1,3 +1,4 @@
+#Only needed for demo and debugging
 import cv2
 
 #Equalizes a histogram
@@ -6,7 +7,7 @@ import cv2
 def histEq(self, image, imageHist):
     pdf = [] #get PDF
     cdf = [] #get CDF
-
+    
 
     return (image, imageHist)
 
@@ -19,3 +20,12 @@ def getPDF(image):
 def getCDF(pdf):
     cdf = []
     return cdf
+
+'''
+Steps:
+1. Calculate Hist.
+2. Calculate PDF
+3. Calculate CDF
+4. Multiply CDF with ((grey levels)-1) ie 255
+5. 
+'''
