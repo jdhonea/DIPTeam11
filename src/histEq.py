@@ -1,13 +1,13 @@
 
 
-def histEq(self, image, imageHist):
+def histEqual(self, image, imageHist):
     # Equalizes a histogram
     # Receives a source image and histogram
     # Returns altered image and histogram
     pdf = imageHist.pdf  # get PDF
     cdf = imageHist.cdf  # get CDF
     hist = imageHist.hist  # get histogram
-
+    main.display_image("image", image)
     return (image, imageHist)
 
 

@@ -1,6 +1,6 @@
 import cv2
 from src.histogram import Hist
-
+from src.histEq import histEqual as eq
 
 # DEBUGGING ONLY
 def display_image(window_name, image):
