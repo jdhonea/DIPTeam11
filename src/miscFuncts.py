@@ -5,7 +5,7 @@ import cv2
 
 
 # DEBUGGING ONLY
-def display_image(window_name, image):
+def displayImage(window_name, image):
     cv2.namedWindow(window_name)
     cv2.imshow(window_name, image)
     cv2.waitKey(0)

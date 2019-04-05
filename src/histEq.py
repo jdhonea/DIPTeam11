@@ -1,13 +1,14 @@
+from .miscFuncts import displayImage
 
 
-def histEq(self, image, imageHist):
+def histEq(image, imageHist):
     # Equalizes a histogram
     # Receives a source image and histogram
     # Returns altered image and histogram
     pdf = imageHist.pdf  # get PDF
     cdf = imageHist.cdf  # get CDF
     hist = imageHist.hist  # get histogram
-
+    displayImage("image", image)
     return (image, imageHist)
 
 
