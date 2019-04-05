@@ -1,13 +1,6 @@
 import cv2
 from src.histogram import Hist
-from src.histEq import histEqual as eq
-
-# DEBUGGING ONLY
-def display_image(window_name, image):
-    cv2.namedWindow(window_name)
-    cv2.imshow(window_name, image)
-    cv2.waitKey(0)
-
+from src.histEq import histEq
 
 if __name__ == "__main__":
     image = []
