@@ -1,5 +1,3 @@
-import cv2
-import numpy as np
 
 class Hist:
     def __init__(self, image):
