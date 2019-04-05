@@ -13,6 +13,5 @@ if __name__ == "__main__":
     ###########################DEBUGGING ONLY###############################
     image = cv2.imread('Lenna0.jpg', cv2.IMREAD_GRAYSCALE)
     hist = Hist(image)
-    display_image("Image", image)
     ########################################################################
     #Draw window   
