@@ -1,28 +1,19 @@
 from .histogram import Hist
 import numpy as np
-from .miscFuncts import displayImage
-import matplotlib.pyplot as plt
 
 
 def histMatch(image, target):
     # Receives an image and a target image
     # Returns image and histogram
-    hist = []
     imageHist = Hist(image)
     targetHist = Hist(target)
     imgCDF = imageHist.cdf
     targetCDF = targetHist.cdf
     imgCDF = [int(x * 255) for x in imgCDF]
     targetCDF = [int(x * 255) for x in targetCDF]
-    displayImage("Original", image)
-    plt.plot(imageHist.hist)
-    plt.plot(targetHist.hist)
     image = calculateImage(image, imgCDF, targetCDF)
-    displayImage("Matched", image)
-    newHist = Hist(image)
-    plt.plot(newHist.hist)
-    plt.show()
-    return (image, hist)
+    newHist = Hist(image).hist
+    return (image, newHist)
 
 
 def calculateImage(image, src, target):
@@ -30,9 +21,10 @@ def calculateImage(image, src, target):
     for row in range(0, newImage.shape[0]):
         for col in range(0, newImage.shape[1]):
             intermedValue = src[image[row][col]]  # Grabs the CDF value from the src image
-            for value in target:
+            for index, value in enumerate(target):
+                # Matches the CDF value to that in the target CDF
                 if intermedValue <= value:
-                    intermedValue = value
+                    intermedValue = index
                     break
             newImage[row][col] = intermedValue
     return newImage
