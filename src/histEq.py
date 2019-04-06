@@ -1,4 +1,6 @@
 import numpy as np
+#import matplotlib.pyplot as plt
+from .histogram import Hist
 
 
 def histEq(image, histogram):
@@ -9,8 +11,14 @@ def histEq(image, histogram):
     hist = histogram.hist  # get histogram
     cdf = [int(x * 255) for x in cdf]
     image = equalized(image, cdf)
+    #plt.plot(hist)
+    #plt.show()
     #displayImage("image", image)
-    return (image, hist)
+    hist = Hist(image)
+    newHist = hist.hist
+    #plt.plot(newHist)
+    #plt.show()
+    return (image, newHist)
 
 
 def equalized(src, cdf):
