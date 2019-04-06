@@ -2,10 +2,11 @@ import numpy as np
 from .histogram import Hist
 
 
-def histEq(image, histogram):
+def histEq(image):
     # Equalizes a histogram
     # Receives a source image and histogram
     # Returns altered image and histogram
+    histogram = Hist(image)
     cdf = histogram.cdf  # get CDF
     hist = histogram.hist  # get histogram
     cdf = [int(x * 255) for x in cdf]
