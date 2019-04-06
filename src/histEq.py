@@ -1,30 +1,22 @@
-from .miscFuncts import displayImage
+import numpy as np
 
 
-<<<<<<< HEAD
-def histEqual(self, image, imageHist):
-=======
-def histEq(image, imageHist):
->>>>>>> 617969a690ec1b07538852cf7617af4b8dc41cce
+def histEq(image, histogram):
     # Equalizes a histogram
     # Receives a source image and histogram
     # Returns altered image and histogram
-    pdf = imageHist.pdf  # get PDF
-    cdf = imageHist.cdf  # get CDF
-    hist = imageHist.hist  # get histogram
-<<<<<<< HEAD
-    main.display_image("image", image)
-=======
-    displayImage("image", image)
->>>>>>> 617969a690ec1b07538852cf7617af4b8dc41cce
-    return (image, imageHist)
+    cdf = histogram.cdf  # get CDF
+    hist = histogram.hist  # get histogram
+    cdf = [int(x * 255) for x in cdf]
+    image = equalized(image, cdf)
+    #displayImage("image", image)
+    return (image, hist)
 
 
-'''
-Steps:
-1. Calculate Hist.
-2. Calculate PDF
-3. Calculate CDF
-4. Multiply CDF with ((grey levels)-1) ie 255
-5. 
-'''
+def equalized(src, cdf):
+    image = np.zeros(src.shape, np.uint8())
+    for row in range(0, image.shape[0]):
+        for col in range(0, image.shape[1]):
+            pixelValue = src[row][col]
+            image[row][col] = cdf[pixelValue]
+    return image
