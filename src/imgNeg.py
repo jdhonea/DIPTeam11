@@ -5,3 +5,8 @@ import numpy as np
 
 def imgNegative(image):
     # Inputs image and returns a negative
+
+
+
+
+    return image
