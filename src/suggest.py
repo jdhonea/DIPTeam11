@@ -43,9 +43,7 @@ def testForEq(hist):
 
 
 # Logarithmic Transformation
-# Idea - If the image max and min values span most of the range but is 
-# concentrated primarily in the darker range
-# Testing 75% of pixels below 100
+# TODO: Figure out a a test for this transformation
 def testForLog(hist):
 
     return False
