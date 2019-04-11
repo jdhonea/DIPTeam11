@@ -1,13 +1,17 @@
-# Automaticaly suggest a transform based upon the histogram
 from .histogram import Hist
 
 
+# Automaticaly suggest a transform based upon the histogram
+# Tests for Histogram Equalization, Log Transformation, Power-Law (Gamma) Transformation
+# TODO: Test constraints need to be tested and adjusted and there are probably better tests
+# that can be implemented
 def suggest(image):
+    histogram = Hist(image)
     hist = Hist(image).hist
     suggestion = None
     if testForEq(hist):
         suggestion = "equal"
-    elif testForLog(hist):
+    elif testForLog(histogram):  # Equalization failed at this point, therefore histogram is not limited to 66% of range
         suggestion = "log"
     elif testForPowLaw(hist):
         suggestion = "power"
@@ -42,12 +46,17 @@ def testForEq(hist):
 # Logarithmic Transformation
 # Idea - If the image max and min values span most of the range but is 
 # concentrated primarily in the darker range
+# Testing 75% of pixels below 100
 def testForLog(hist):
-
-    return False 
+    cdf = hist.cdf
+    if cdf[100] >= 0.75:
+        return True
+    else:
+        return False 
 
 
 # Power-Law (Gamma) Transform
+# TODO: Figure out a way to test for this transformation
 def testForPowLaw(hist):
 
     return False
