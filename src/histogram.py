@@ -5,7 +5,7 @@ class Hist:
         self.hist = self.calculateHist()
         self.pdf = self.calculatePDF()
         self.cdf = self.calculateCDF()
-    
+
     def calculateHist(self):
         hist = [0] * 256
         for row in range(0, self.image.shape[0]):
@@ -18,14 +18,12 @@ class Hist:
         sizeOfImage = self.image.shape[0] * self.image.shape[1]
         for x in range(0, len(pdf)):
             pdf[x] = self.hist[x]/sizeOfImage
-        
         return pdf
 
     def calculateCDF(self):
         cdf = [0] * 256
         sum = 0
-        for x in range(0,len(self.pdf)):
+        for x in range(0, len(self.pdf)):
             sum += self.pdf[x]
             cdf[x] = sum
         return cdf
-

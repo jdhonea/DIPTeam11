@@ -4,10 +4,9 @@ from .histogram import Hist
 
 def suggest(image):
     hist = Hist(image).hist
-    methodNotFound = True
-    if methodNotFound:
-        if testForEq(hist):
-            suggestion = "equalization"
+    suggestion = None
+    if testForEq(hist) and suggestion is None:
+        suggestion = "equalization"
     return suggestion
 
 
