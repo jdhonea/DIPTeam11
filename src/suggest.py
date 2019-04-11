@@ -7,7 +7,7 @@ from .histogram import Hist
 # that can be implemented
 def suggest(image):
     histogram = Hist(image)
-    hist = Hist(image).hist
+    hist = histogram.hist
     suggestion = None
     if testForEq(hist):
         suggestion = "equal"
@@ -15,7 +15,6 @@ def suggest(image):
         suggestion = "log"
     elif testForPowLaw(hist):
         suggestion = "power"
-    
     return suggestion
 
 
@@ -48,11 +47,8 @@ def testForEq(hist):
 # concentrated primarily in the darker range
 # Testing 75% of pixels below 100
 def testForLog(hist):
-    cdf = hist.cdf
-    if cdf[100] >= 0.75:
-        return True
-    else:
-        return False 
+
+    return False
 
 
 # Power-Law (Gamma) Transform
