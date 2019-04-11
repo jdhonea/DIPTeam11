@@ -5,8 +5,13 @@ from .histogram import Hist
 def suggest(image):
     hist = Hist(image).hist
     suggestion = None
-    if testForEq(hist) and suggestion is None:
-        suggestion = "equalization"
+    if testForEq(hist):
+        suggestion = "equal"
+    elif testForLog(hist):
+        suggestion = "log"
+    elif testForPowLaw(hist):
+        suggestion = "power"
+    
     return suggestion
 
 
@@ -32,3 +37,17 @@ def testForEq(hist):
         return True
     else:
         return False
+
+
+# Logarithmic Transformation
+# Idea - If the image max and min values span most of the range but is 
+# concentrated primarily in the darker range
+def testForLog(hist):
+
+    return False 
+
+
+# Power-Law (Gamma) Transform
+def testForPowLaw(hist):
+
+    return False
