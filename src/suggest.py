@@ -1,4 +1,5 @@
 from .histogram import Hist
+import matplotlib.pyplot as plt
 
 
 # Automaticaly suggest a transform based upon the histogram
@@ -43,10 +44,14 @@ def testForEq(hist):
 
 
 # Logarithmic Transformation
-# TODO: Figure out a a test for this transformation
+# Idea - If the intensity values of the image expand more than 66% of the image,
+#  but is mostly concentrated in the dark region.
 def testForLog(hist):
-
-    return False
+    cdf = hist.cdf
+    if cdf[80] >= 0.70:
+        return True
+    else:
+        return False
 
 
 # Power-Law (Gamma) Transform
