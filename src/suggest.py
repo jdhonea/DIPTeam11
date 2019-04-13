@@ -1,5 +1,4 @@
 from .histogram import Hist
-import matplotlib.pyplot as plt
 
 
 # Automaticaly suggest a transform based upon the histogram
