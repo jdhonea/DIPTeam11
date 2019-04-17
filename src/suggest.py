@@ -83,9 +83,9 @@ def testForPowLaw(hist):
             upperSum += abs(upperCurve[i] - hist[i])
             lowerSum += abs(lowerCurve[i] - hist[i])
         if upperSum < 1500:
-            """ plt.plot(hist)
+            """plt.plot(hist)
             plt.plot(upperCurve)
-            plt.show() """
+            plt.show()"""
             return True
         gammaOffset += .5
         # print("Upper Curve:", upperSum, "Lower Curve:", lowerSum)
