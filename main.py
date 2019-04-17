@@ -8,7 +8,7 @@ if __name__ == "__main__":
     image = []
     hist = []
     # ##########################DEBUGGING ONLY###############################
-    image = cv2.imread('gray.jpg', cv2.IMREAD_GRAYSCALE)
+    image = cv2.imread('LennaGamma.jpg', cv2.IMREAD_GRAYSCALE)
     suggest(image)
     # #######################################################################
     # Draw window

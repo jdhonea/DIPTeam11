@@ -1,4 +1,6 @@
 from .histogram import Hist
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 # Automaticaly suggest a transform based upon the histogram
@@ -11,10 +13,10 @@ def suggest(image):
     suggestion = None
     if testForEq(hist):
         suggestion = "equal"
-    elif testForLog(histogram):  # Equalization failed at this point, therefore histogram is not limited to 66% of range
-        suggestion = "log"
-    elif testForPowLaw(hist):
+    elif testForPowLaw(histogram):
         suggestion = "power"
+    elif testForLog(histogram):
+        suggestion = "log"
     return suggestion
 
 
@@ -43,8 +45,10 @@ def testForEq(hist):
 
 
 # Logarithmic Transformation
+# TODO: Figure out a better way to test for this transformation!
 # Idea - If the intensity values of the image expand more than 66% of the image,
-#  but is mostly concentrated in the dark region.
+# but is mostly concentrated in the dark region. A better test should be 
+# thought of.
 def testForLog(hist):
     cdf = hist.cdf
     if cdf[80] >= 0.70:
@@ -54,7 +58,35 @@ def testForLog(hist):
 
 
 # Power-Law (Gamma) Transform
-# TODO: Figure out a way to test for this transformation
+# TODO: Figure out a better way to test for this transformation!
+# Idea: Test a range of gamma curves and see if the histogram follows one fairly close.
+# If so, the inverse gamma can be applied.
 def testForPowLaw(hist):
-
+    # Steps:
+    # 1. Get the cdf
+    # 2. Calculate current gamma curve for gamma x on ranges 0 - 255
+    # 3. Find the |distance| between the gamma curve and the image cdf, smaller the value the more similar the curves are
+    # 4. If the curve falls within a certain threshold of similarity, gamma transform should be recommended.
+    hist = hist.cdf
+    hist = [int(x * 255) for x in hist]
+    gammaOffset = .5  # Offset to be added to the gamma values to increment them along
+    normalHist = np.arange(256)
+    lowerGamma = 0
+    while (lowerGamma < 25):
+        upperSum = 0
+        lowerSum = 0
+        upperGamma = 1/(1 + gammaOffset)  # The curve related to 1/x
+        lowerGamma = 1 + gammaOffset  # The curve related to x
+        upperCurve = np.array(255*(normalHist/255)**upperGamma)  # Generate the upper curve
+        lowerCurve = np.array(255*(normalHist/255)**lowerGamma)  # Generate the lower curve
+        for i in range(0, len(hist), 3):  # Summation every 3 steps
+            upperSum += abs(upperCurve[i] - hist[i])
+            lowerSum += abs(lowerCurve[i] - hist[i])
+        if upperSum < 1500:
+            """ plt.plot(hist)
+            plt.plot(upperCurve)
+            plt.show() """
+            return True
+        gammaOffset += .5
+        # print("Upper Curve:", upperSum, "Lower Curve:", lowerSum)
     return False
