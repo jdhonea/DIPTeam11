@@ -1,4 +1,3 @@
-from .histogram import Hist
 import numpy as np
 import cv2
 
