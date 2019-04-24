@@ -55,5 +55,6 @@ if __name__ == "__main__":
             suggestion = suggest(image)
             print(suggestion)
         else:
-            print("Invalid Command")
+            if command != "":
+                print("Invalid Command")
         command = input()
