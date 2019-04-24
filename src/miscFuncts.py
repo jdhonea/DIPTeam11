@@ -9,3 +9,4 @@ def displayImage(window_name, image):
     cv2.namedWindow(window_name)
     cv2.imshow(window_name, image)
     cv2.waitKey(0)
+    cv2.destroyAllWindows()

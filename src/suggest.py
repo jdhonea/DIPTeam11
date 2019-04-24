@@ -17,6 +17,8 @@ def suggest(image):
         suggestion = "power"
     elif testForLog(histogram):
         suggestion = "log"
+    else:
+        return "none"
     return suggestion
 
 
@@ -81,12 +83,13 @@ def testForPowLaw(hist):
             upperSum += abs(upperCurve[i] - hist[i])
             lowerSum += abs(lowerCurve[i] - hist[i])
         if upperSum < 2500:
-            #print(upperGamma)
+            print(upperGamma)
             """plt.plot(hist)
             plt.plot(upperCurve)
             plt.show()"""
             return True
-        elif lowerCurve < 2500:
+        elif lowerSum < 2500:
+            print(lowerGamma)
             return True
         gammaOffset += .5
         # print("Upper Curve:", upperSum, "Lower Curve:", lowerSum)

@@ -7,7 +7,7 @@ def contrast_str(image):
     Imax = np.max(image)  # get max pixel
     Imin = np.min(image)  # get min pixel
     rate = 255 / (Imax - Imin)
-    transfor_matrix = np.zeros(image.shape)
+    transfor_matrix = np.zeros(image.shape, np.uint8)
     for i in range(0, int(y)):
         for j in range(0, int(x)):
             transfor_matrix[i, j] = round(rate * (image[i, j] - Imin))
