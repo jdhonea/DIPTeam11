@@ -47,7 +47,7 @@ if __name__ == "__main__":
             displayImage("Power Law", displayimage)
         elif command == "shaping":
             hist = Hist(image)
-            shape = input("Target Histograms: \n1. Bell Shaped\n2.Bimodal\n3.Right Skewed\n4.J Shaped\n5. U Shaped\n")
+            shape = input("Target Histograms: \n1. Bell Shaped\n2. Bimodal\n3. Right Skewed\n4. J Shaped\n5. U Shaped\n")
             newimage = hist.HistShap(hist.app_spec_hist()[int(shape) - 1])
             displayimage = np.hstack((image, newimage))
             displayImage("Shaping", displayimage)
