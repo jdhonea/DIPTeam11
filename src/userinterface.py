@@ -10,6 +10,7 @@ from src.histEq import histEq
 from src.suggest import suggest
 from src.miscFuncts import displayImage
 from src.powerLawGamma import powerLaw
+from src.Contrast_Stretch import contrast_str
 from src.imgNeg import imgNegative
 
 class GUIclass:
@@ -41,8 +42,12 @@ class GUIclass:
         menuitem=Menu(window)
         trans=Menu(window)
         menu.add_cascade(label="Transformations", menu=trans)
-        trans.add_radiobutton(label="Negative", command=self.set_negative)
-        #trans.add_radiobutton(label="Option 2", command=self.choose_op())
+        trans.add_radiobutton(label="Contrast Stretch", command=self.set_contrast_stretch)
+        trans.add_radiobutton(label="Histogram Equalization", command=self.set_histogram_equalization)
+        #equalized?
+        trans.add_radiobutton(label="Image Negative", command=self.set_negative)
+        trans.add_radiobutton(label="Power Law Gamma", command=self.set_pl_gamma)
+
 
         #translation button
         self.button=Button(window, text="Apply", command=self.transformation)
@@ -60,9 +65,21 @@ class GUIclass:
         # self.button.pack()
         #self.button.place(height=100, width=100)
 
+    def set_contrast_stretch(self):
+        self.operation="contraststr"
+        print("Contrast Stretch chosen")
+
+    def set_histogram_equalization(self):
+        self.operation="histeq"
+        print("Histogram Equalization chosen")
+
     def set_negative(self):
-        self.operation="Negative"
-        print("Negative chosen")
+        self.operation="imgneg"
+        print("Image Negative chosen")
+
+    def set_pl_gamma(self):
+        self.operation="plg"
+        print("Power Law Gamma chosen")
 
     def clear_image(self):
         self.image_label.destroy()
@@ -73,12 +90,36 @@ class GUIclass:
         tkimage = self.image
         img_matrix=self.image_matrix
 
-        if self.operation=="Negative":
-            print("Negative applied")
+        if self.operation=="contraststr":
+            print("Constrast stretch applied")
+            #print(img_matrix.shape)
+            img_matrix=contrast_str(img_matrix)
+            img=Image.fromarray(img_matrix)
+            tkimage=ImageTk.PhotoImage(img)
+
+        elif self.operation=="histeq":
+            print("Histogram Equalization applied")
+            #print(img_matrix.shape)
+            img_matrix, histogram=histEq(img_matrix)
+            img=Image.fromarray(img_matrix)
+            tkimage=ImageTk.PhotoImage(img)
+
+        elif self.operation=="imgneg":
+            print("Image Negative applied")
             #print(img_matrix.shape)
             img_matrix=imgNegative(img_matrix)
             img=Image.fromarray(img_matrix)
             tkimage=ImageTk.PhotoImage(img)
+
+        elif self.operation=="plg":
+            print("Power Gamma Law applied")
+            #print(img_matrix.shape)
+            img_matrix=powerLaw(img_matrix, 2)
+            img=Image.fromarray(img_matrix)
+            tkimage=ImageTk.PhotoImage(img)
+
+        else:
+            print("Error, incorrect selection.")
 
         label = Label(self.window, image=tkimage)
         label.image = tkimage
@@ -86,7 +127,7 @@ class GUIclass:
         self.image_label = label
 
     def open_file(self):
-        path=filedialog.askopenfilename(filetypes=[("Image File", 'jpg', '.png')])
+        path=filedialog.askopenfilename(filetypes=[("Image File", '.jpg', '.png')])
         im=Image.open(path)
         tkimage=ImageTk.PhotoImage(im)
         img=Image.open(path)
