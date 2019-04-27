@@ -4,9 +4,7 @@ import cv2
 
 def imgNegative(image):
     # Inputs image and returns a negative
-    NegImage = np.zeros(image.shape, np.uint8)
-    #cv2.imshow(image)
-    #cv2.waitkey(0)
+    NegImage = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
 
     for i in range(0, image.shape[0]):
         for j in range(0, image.shape[1]):
