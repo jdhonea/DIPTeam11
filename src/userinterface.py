@@ -1,5 +1,5 @@
 import numpy as np
-from tkinter import Image, filedialog, Label, Button, Tk, Menu, Frame
+from tkinter import Image, filedialog, Label, Button, Tk, Menu, Frame, simpledialog, messagebox
 from tkinter import *
 from PIL import Image, ImageTk
 import tkinter as tk
@@ -12,6 +12,7 @@ from src.miscFuncts import displayImage
 from src.powerLawGamma import powerLaw
 from src.Contrast_Stretch import contrast_str
 from src.imgNeg import imgNegative
+from src.log_transform import LogTransform
 
 class GUIclass:
     def __init__(self, window):
@@ -46,6 +47,7 @@ class GUIclass:
         trans.add_radiobutton(label="Histogram Equalization", command=self.set_histogram_equalization)
         #equalized?
         trans.add_radiobutton(label="Image Negative", command=self.set_negative)
+        trans.add_radiobutton(label="Log Transform", command=self.set_log_transform)
         trans.add_radiobutton(label="Power Law Gamma", command=self.set_pl_gamma)
 
 
@@ -56,6 +58,12 @@ class GUIclass:
         # clear button
         self.button = Button(window, text="Clear", command=self.clear_image)
         self.button.pack(side=BOTTOM)
+
+        #show suggestion
+        self.button = Button(window, text="Suggest Transform", command=self.show_suggest)
+        self.button.pack(side=BOTTOM)
+
+        #filler labels for images
 
 
         # self.button=Button(window, text="Transformation", command=self.Transformation)
@@ -77,6 +85,10 @@ class GUIclass:
         self.operation="imgneg"
         print("Image Negative chosen")
 
+    def set_log_transform(self):
+        self.operation="logtran"
+        print("Log Transform chosen")
+
     def set_pl_gamma(self):
         self.operation="plg"
         print("Power Law Gamma chosen")
@@ -84,36 +96,51 @@ class GUIclass:
     def clear_image(self):
         self.image_label.destroy()
 
+    def show_suggest(self):
+        arr=self.image_matrix
+        suggestion=suggest(arr)
+        messagebox.showinfo("Suggestion", suggestion)
+        print(suggestion)
+
     def transformation(self):
         #self.clear_image()
         #self.image_label.destroy()
+        old_label=self.image_label
+        #if old_label.winfo_exists():
+        #    print("WINDOW EXISTS")
+
         tkimage = self.image
         img_matrix=self.image_matrix
 
         if self.operation=="contraststr":
             print("Constrast stretch applied")
-            #print(img_matrix.shape)
             img_matrix=contrast_str(img_matrix)
             img=Image.fromarray(img_matrix)
             tkimage=ImageTk.PhotoImage(img)
 
         elif self.operation=="histeq":
             print("Histogram Equalization applied")
-            #print(img_matrix.shape)
             img_matrix, histogram=histEq(img_matrix)
             img=Image.fromarray(img_matrix)
             tkimage=ImageTk.PhotoImage(img)
 
         elif self.operation=="imgneg":
             print("Image Negative applied")
-            #print(img_matrix.shape)
             img_matrix=imgNegative(img_matrix)
+            img=Image.fromarray(img_matrix)
+            tkimage=ImageTk.PhotoImage(img)
+
+        elif self.operation=="logtran":
+            print("Log Transform applied")
+            val=simpledialog.askfloat("C value:", "What is the c value?")
+            log=LogTransform()
+            img_matrix=LogTransform.log_transform(log, img_matrix, val)
             img=Image.fromarray(img_matrix)
             tkimage=ImageTk.PhotoImage(img)
 
         elif self.operation=="plg":
             print("Power Gamma Law applied")
-            #print(img_matrix.shape)
+            val = simpledialog.askfloat("Gamma:", "What is the gamma value?")
             img_matrix=powerLaw(img_matrix, 2)
             img=Image.fromarray(img_matrix)
             tkimage=ImageTk.PhotoImage(img)
@@ -127,14 +154,18 @@ class GUIclass:
         self.image_label = label
 
     def open_file(self):
-        path=filedialog.askopenfilename(filetypes=[("Image File", '.jpg', '.png')])
+        #open image
+        path=filedialog.askopenfilename(filetypes=[("Image File", "*")])
         im=Image.open(path)
         tkimage=ImageTk.PhotoImage(im)
-        img=Image.open(path)
+        img=Image.open(path).convert("L")
         arr=np.array(img)
+
+        #show image
         self.image = tkimage
         self.image_matrix=arr
         label=Label(self.window, image=tkimage)
+        #label.configure(image=tkimage)
         label.image=tkimage
         label.pack(side=LEFT, ipadx=125)
 
@@ -154,4 +185,3 @@ win.geometry("1600x700")
 # win.resizable(0,0)
 GUI=GUIclass(win)
 win.mainloop()
-
