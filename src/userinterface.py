@@ -21,10 +21,14 @@ class GUIclass:
         #to choose operation
         self.operation=""
         #to apply operation
-        self.image=tk.Image
+        self.image=""
         self.image_matrix=np.zeros((5,5))
         #to clear image
         self.image_label=tk.Label
+        #to save image
+        self.newimage=""
+        #asdf
+        self.originallabel=""
         #title
         window.title("COSC 4393 Final Project")
 
@@ -45,7 +49,7 @@ class GUIclass:
         menu.add_cascade(label="Transformations", menu=trans)
         trans.add_radiobutton(label="Contrast Stretch", command=self.set_contrast_stretch)
         trans.add_radiobutton(label="Histogram Equalization", command=self.set_histogram_equalization)
-        #equalized?
+        trans.add_radiobutton(label="Histogram Matching", command=self.set_histogram_matching)
         trans.add_radiobutton(label="Image Negative", command=self.set_negative)
         trans.add_radiobutton(label="Log Transform", command=self.set_log_transform)
         trans.add_radiobutton(label="Power Law Gamma", command=self.set_pl_gamma)
@@ -55,15 +59,9 @@ class GUIclass:
         self.button=Button(window, text="Apply", command=self.transformation)
         self.button.pack(side=BOTTOM)
 
-        # clear button
-        self.button = Button(window, text="Clear", command=self.clear_image)
-        self.button.pack(side=BOTTOM)
-
         #show suggestion
         self.button = Button(window, text="Suggest Transform", command=self.show_suggest)
         self.button.pack(side=BOTTOM)
-
-        #filler labels for images
 
 
         # self.button=Button(window, text="Transformation", command=self.Transformation)
@@ -81,6 +79,10 @@ class GUIclass:
         self.operation="histeq"
         print("Histogram Equalization chosen")
 
+    def set_histogram_matching(self):
+        self.operation="histmat"
+        print("Histogram Matching chosen")
+
     def set_negative(self):
         self.operation="imgneg"
         print("Image Negative chosen")
@@ -93,9 +95,6 @@ class GUIclass:
         self.operation="plg"
         print("Power Law Gamma chosen")
 
-    def clear_image(self):
-        self.image_label.destroy()
-
     def show_suggest(self):
         arr=self.image_matrix
         suggestion=suggest(arr)
@@ -103,11 +102,9 @@ class GUIclass:
         print(suggestion)
 
     def transformation(self):
-        #self.clear_image()
-        #self.image_label.destroy()
-        old_label=self.image_label
-        #if old_label.winfo_exists():
-        #    print("WINDOW EXISTS")
+
+        if self.newimage:
+            self.image_label.forget()
 
         tkimage = self.image
         img_matrix=self.image_matrix
@@ -121,6 +118,17 @@ class GUIclass:
         elif self.operation=="histeq":
             print("Histogram Equalization applied")
             img_matrix, histogram=histEq(img_matrix)
+            img=Image.fromarray(img_matrix)
+            tkimage=ImageTk.PhotoImage(img)
+
+        elif self.operation=="histmat":
+            print("Histogram Matching applied")
+            # open image
+            path = filedialog.askopenfilename(filetypes=[("Image File", "*")])
+            img = Image.open(path).convert("L")
+            arr = np.array(img)
+
+            img_matrix, histogram=histMatch(img_matrix, arr)
             img=Image.fromarray(img_matrix)
             tkimage=ImageTk.PhotoImage(img)
 
@@ -141,7 +149,7 @@ class GUIclass:
         elif self.operation=="plg":
             print("Power Gamma Law applied")
             val = simpledialog.askfloat("Gamma:", "What is the gamma value?")
-            img_matrix=powerLaw(img_matrix, 2)
+            img_matrix=powerLaw(img_matrix, val)
             img=Image.fromarray(img_matrix)
             tkimage=ImageTk.PhotoImage(img)
 
@@ -152,36 +160,37 @@ class GUIclass:
         label.image = tkimage
         label.pack(side=RIGHT, padx=50, expand=TRUE)
         self.image_label = label
+        self.newimage=img
 
     def open_file(self):
         #open image
-        path=filedialog.askopenfilename(filetypes=[("Image File", "*")])
-        im=Image.open(path)
-        tkimage=ImageTk.PhotoImage(im)
-        img=Image.open(path).convert("L")
-        arr=np.array(img)
+        path=filedialog.askopenfilename(filetypes=[("All files", "*"), ("JPEG files", "*.jpg"), ("PNG files", "*.png")])
 
-        #show image
-        self.image = tkimage
-        self.image_matrix=arr
-        label=Label(self.window, image=tkimage)
-        #label.configure(image=tkimage)
-        label.image=tkimage
-        label.pack(side=LEFT, ipadx=125)
+        if self.image:
+            self.originallabel.forget()
+
+        if path:
+            im=Image.open(path)
+            tkimage=ImageTk.PhotoImage(im)
+            img=Image.open(path).convert("L")
+            arr=np.array(img)
+
+            #show image
+            self.image = tkimage
+            self.image_matrix=arr
+            label=Label(self.window, image=tkimage)
+            self.originallabel=label
+            label.image=tkimage
+            label.pack(side=LEFT, ipadx=125)
 
     def save_file(self):
-        path=filedialog.asksaveasfilename(initialdir = "/",title = "Select file",filetypes = (("jpeg files","*.jpg"),("all files","*.*")))
-
-    def get_image(self):
-        print("get")
-
-    def set_image(self):
-        print("set")
+        path=filedialog.asksaveasfilename(initialdir = "/", title = "Select file", defaultextension=".jpg" ,filetypes = [("JPEG files", "*.jpg"), ("PNG files", "*.png")])
+        if path:
+            self.newimage.save(path)
 
 
 win=Tk()
-# height x width
-win.geometry("1600x700")
+win.state("zoomed")
 # win.resizable(0,0)
 GUI=GUIclass(win)
 win.mainloop()
