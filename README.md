@@ -6,4 +6,4 @@ DIP Group Project - Team 11
 - OpenCV
 ### Instructions:
 Simply launch the program with 
-'''python main.py'''
+```python main.py```
