@@ -5,4 +5,5 @@ DIP Group Project - Team 11
 ### Requires:
 - OpenCV
 ### Instructions:
-Simply launch the program with python main.py
+Simply launch the program with 
+'''python main.py'''
