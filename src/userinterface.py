@@ -7,8 +7,8 @@ import cv2
 
 from src.histMatch import histMatch
 from src.histEq import histEq
+from src.histogram import Hist
 from src.suggest import suggest
-from src.miscFuncts import displayImage
 from src.powerLawGamma import powerLaw
 from src.Contrast_Stretch import contrast_str
 from src.imgNeg import imgNegative
@@ -16,18 +16,13 @@ from src.log_transform import LogTransform
 
 class GUIclass:
     def __init__(self, window):
-        #window is a tk object
+        #set references
         self.window=window
-        #to choose operation
         self.operation=""
-        #to apply operation
         self.image=""
         self.image_matrix=np.zeros((5,5))
-        #to clear image
         self.image_label=tk.Label
-        #to save image
         self.newimage=""
-        #asdf
         self.originallabel=""
         #title
         window.title("COSC 4393 Final Project")
@@ -35,41 +30,31 @@ class GUIclass:
         #menubar
         menu=Menu(window)
         window.config(menu=menu)
-
         filemenu=Menu(menu)
         menu.add_cascade(label="File", menu=filemenu)
-
         filemenu.add_command(label="Open...", command=self.open_file)
         filemenu.add_command(label="Save New Image As...", command=self.save_file)
+        filemenu.add_command(label="Clear All Images", command=self.clear_all)
         filemenu.add_command(label="Exit", command=window.quit)
 
         #radio buttons
-        menuitem=Menu(window)
         trans=Menu(window)
         menu.add_cascade(label="Transformations", menu=trans)
         trans.add_radiobutton(label="Contrast Stretch", command=self.set_contrast_stretch)
         trans.add_radiobutton(label="Histogram Equalization", command=self.set_histogram_equalization)
         trans.add_radiobutton(label="Histogram Matching", command=self.set_histogram_matching)
+        trans.add_radiobutton(label="Histogram Shaping", command=self.set_histogram_shaping)
         trans.add_radiobutton(label="Image Negative", command=self.set_negative)
         trans.add_radiobutton(label="Log Transform", command=self.set_log_transform)
         trans.add_radiobutton(label="Power Law Gamma", command=self.set_pl_gamma)
 
-
-        #translation button
-        self.button=Button(window, text="Apply", command=self.transformation)
+        #apply button
+        self.button=Button(window, text="Apply", command=self.transformation, height=2, width=25)
         self.button.pack(side=BOTTOM)
 
         #show suggestion
-        self.button = Button(window, text="Suggest Transform", command=self.show_suggest)
-        self.button.pack(side=BOTTOM)
-
-
-        # self.button=Button(window, text="Transformation", command=self.Transformation)
-        # self.button.pack()
-        #
-        # self.button=Button(window, text="Choose Image", command=self.open_file)
-        # self.button.pack()
-        #self.button.place(height=100, width=100)
+        self.button = Button(window, text="Suggest Transform", command=self.show_suggest, height=2, width=20)
+        self.button.pack(side=TOP)
 
     def set_contrast_stretch(self):
         self.operation="contraststr"
@@ -82,6 +67,10 @@ class GUIclass:
     def set_histogram_matching(self):
         self.operation="histmat"
         print("Histogram Matching chosen")
+
+    def set_histogram_shaping(self):
+        self.operation="histshap"
+        print("Histogram Shaping chosen")
 
     def set_negative(self):
         self.operation="imgneg"
@@ -96,18 +85,33 @@ class GUIclass:
         print("Power Law Gamma chosen")
 
     def show_suggest(self):
+        if not self.image:
+            messagebox.showerror("Error", "No image chosen!")
+            return None
+
         arr=self.image_matrix
         suggestion=suggest(arr)
         messagebox.showinfo("Suggestion", suggestion)
         print(suggestion)
 
     def transformation(self):
-
         if self.newimage:
-            self.image_label.forget()
+            self.image_label.destroy()
+            self.image_label=""
 
         tkimage = self.image
         img_matrix=self.image_matrix
+
+        #check if image is present
+        if not tkimage:
+            print("No image selected!")
+            messagebox.showerror("Error", "No image chosen!")
+            return None
+
+        #check if operation is chosen
+        if not self.operation:
+            messagebox.showwarning("Warning", "No transformation chosen!")
+            return None
 
         if self.operation=="contraststr":
             print("Constrast stretch applied")
@@ -129,6 +133,14 @@ class GUIclass:
             arr = np.array(img)
 
             img_matrix, histogram=histMatch(img_matrix, arr)
+            img=Image.fromarray(img_matrix)
+            tkimage=ImageTk.PhotoImage(img)
+
+        elif self.operation=="histshap":
+            print("Histogram Shaping applied")
+            val=simpledialog.askstring("Select a value:", "Target Histograms: \n1. Bell Shaped\n2. Bimodal\n3. Right Skewed\n4. J Shaped\n5. U Shaped\nExample input: 3\n")
+            hist=Hist(img_matrix)
+            img_matrix=hist.HistShap(hist.app_spec_hist()[int(val)-1])
             img=Image.fromarray(img_matrix)
             tkimage=ImageTk.PhotoImage(img)
 
@@ -184,13 +196,19 @@ class GUIclass:
             label.pack(side=LEFT, ipadx=125)
 
     def save_file(self):
+        if not self.newimage:
+            messagebox.showwarning("Warning", "No transformed image!")
+            return None
+
         path=filedialog.asksaveasfilename(initialdir = "/", title = "Select file", defaultextension=".jpg" ,filetypes = [("JPEG files", "*.jpg"), ("PNG files", "*.png")])
         if path:
             self.newimage.save(path)
 
+    def clear_all(self):
+        if self.newimage:
+            self.image_label.destroy()
+            self.newimage=""
 
-win=Tk()
-win.state("zoomed")
-# win.resizable(0,0)
-GUI=GUIclass(win)
-win.mainloop()
+        if self.image:
+            self.originallabel.destroy()
+            self.image=""
